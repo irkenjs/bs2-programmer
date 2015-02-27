@@ -3,51 +3,6 @@
 var send = require('./lib/sendData');
 var async = require('async');
 
-function assertingdtr(stream, cb) {
-  console.log('asserting dtr, asserting brk');
-  stream.set({dtr: true, brk: true}, function(err) {
-    console.log('asserted dtr, asserted brk');
-    cb(err);
-  });
-}
-
-function cleardtr(stream, cb) {
-  console.log('clearing dtr');
-  stream.set({dtr: false}, function(err) {
-    console.log('cleared dtr');
-    cb(err);
-  });
-}
-
-function clearbrk(stream, cb) {
-  console.log('clearing brk');
-  stream.set({brk:false}, function(err) {
-    console.log('reset complete');
-    cb(err);
-  });
-}
-
-function reset(stream, time, cb){
-  console.log('resetting');
-
-  async.series([
-    assertingdtr.bind(null, stream),
-    function(cbdone){
-      setTimeout(cbdone, 20);
-    },
-    cleardtr.bind(null, stream),
-    function(cbdone){
-      setTimeout(cbdone, time);
-    },
-    clearbrk.bind(null, stream),
-    function(cbdone){
-      setTimeout(cbdone, 20);
-    },
-  ], function(error, results){
-    cb(error, results);
-  });
-}
-
 function identifyBS2(stream, cb) {
   console.log('identifying');
 
@@ -161,9 +116,8 @@ function identifyBS2(stream, cb) {
 
 }
 
-function bootload(stream, time, hex, cb){
+function bootload(stream, hex, cb){
   async.series([
-    reset.bind(null, stream, time),
     identifyBS2.bind(null, stream),
     send.bind(null, stream, 1000, hex),
     stream.write.bind(stream, new Buffer([0])),
@@ -176,7 +130,6 @@ function bootload(stream, time, hex, cb){
 }
 
 module.exports = {
-  reset:reset,
   identifyBS2: identifyBS2,
   bootload: bootload
 };
