@@ -42,26 +42,22 @@ function upload(path, done){
     baudrate: 9600,
   });
 
-  serialPort.on('open', function(){
 
-    //breaks as low as 13, but 20 for now
-    reset(serialPort, 20, function(){
+  async.series([
+    serialPort.open.bind(serialPort),
+    reset.bind(null, serialPort, 20),
+    bs2.bootload.bind(null, serialPort, hex)
 
-      bs2.bootload(serialPort, hex, function(error){
-        if(error){
-          console.log(error);
-        }
+  ], function(error, results){
 
-        serialPort.close(function (error) {
-          if(error){
-            console.log(error);
-          }
-        });
-
-        done(error);
-      });
-
+    serialPort.close(function (error) {
+      if(error){
+        console.log(error);
+      }
     });
+
+    console.log(error, results);
+    done(error, results);
   });
 
 }
