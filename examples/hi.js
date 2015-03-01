@@ -22,7 +22,7 @@ function clearbrk(stream, cb) {
   });
 }
 
-function reset(stream, time, cb){
+function brk(stream, time, cb){
   console.log('resetting');
 
   async.series([
@@ -45,7 +45,11 @@ function upload(path, done){
 
   async.series([
     serialPort.open.bind(serialPort),
-    reset.bind(null, serialPort, 20),
+    //dtr happenening for free on port open as long as we brk under ~12ms
+    // function(cbdone){
+    //   setTimeout(cbdone, 12);
+    // },
+    brk.bind(null, serialPort, 20),
     bs2.bootload.bind(null, serialPort, hex)
 
   ], function(error, results){
