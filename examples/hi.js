@@ -14,15 +14,21 @@ function upload(path, done){
 
   async.series([
     serialPort.open.bind(serialPort),
-    //dtr happenening for free on port open as long as we brk under ~12ms
-    // function(cbdone){
-    //   setTimeout(cbdone, 12);
-    // },
-    serialPort.set.bind(serialPort, {brk: true}),
+    // dtr happenening for free on port open as long as we brk under ~12ms
+    //wait a bunch to prove we're actually resetting
     function(cbdone){
-      setTimeout(cbdone, 20);
+      setTimeout(cbdone, 5000);
     },
-    serialPort.set.bind(serialPort, {brk: false}),
+    //interesting fact, we currently have to dtr false to generate a reset
+    serialPort.set.bind(serialPort, {dtr: false, brk: true}),
+    function(cbdone){
+      setTimeout(cbdone, 2);
+    },
+    serialPort.set.bind(serialPort, {dtr: true, brk: true}),
+    function(cbdone){
+      setTimeout(cbdone, 45);
+    },
+    serialPort.set.bind(serialPort, {dtr: true, brk: false}),
     bs2.bootload.bind(null, serialPort, hex)
 
   ], function(error, results){
