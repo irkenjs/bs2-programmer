@@ -9,9 +9,9 @@ Upload tokenized hex to Basic Stamp 2.
 
 #install
 ---
-Install [node.js](http://nodejs.org/). Then cd to this directory and install dependencies:
+Install [node.js](http://nodejs.org/). Then cd to this directory and install dependencies **from source**:
 ```
-npm i
+npm install --build-from-source
 ```
 
 #examples

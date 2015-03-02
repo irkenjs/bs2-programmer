@@ -4,7 +4,6 @@
   "description": "Upload tokenized hex to Basic Stamp 2",
   "main": "index.js",
   "scripts": {
-  	"postinstall" : "./postinstall.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jacob Rosenthal",
