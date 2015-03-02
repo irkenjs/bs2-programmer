@@ -4,128 +4,56 @@ var send = require('./lib/sendData');
 var async = require('async');
 
 function identifyBS2(stream, cb) {
-  // console.log('identifying');
 
-  async.series([
+  var bs2Buffer = new Buffer([0x42, 0x53, 0x32]);
+  var bs2Response = new Buffer([0xBE, 0xAD, 0xCE]);
 
+  var index = 0;
+
+  async.whilst(
+    function () { return index < bs2Buffer.length; },
     function(cbdone){
-      send(stream, 1000, new Buffer([66]), function(err, response){
-        if(err){
-          return cbdone(err);
-        }
 
-        if(response !== 190){
+      // console.log('sending: ', bs2Buffer.slice(index, index + 1));
+      send(stream, 1000, bs2Buffer.slice(index, index + 1), function(err, response){
+        // console.log('received: ', err, response);
+        if(err){ return cbdone(err); }
+
+        if(response !== bs2Response[index++]){
           return cbdone(new Error('Incorrect Response: ', response));
         }
 
         return cbdone();
       });
     },
+    function(err){
 
-    function(cbdone){
-      send(stream, 1000, new Buffer([83]), function(err, response){
-        if(err){
-          return cbdone(err);
-        }
-        if(response !== 173){
-          return cbdone(new Error('Incorrect Response: ', response));
-        }
+      if(err) { return cb(err); }
 
-        return cbdone();
-      });
-    },
-
-    function(cbdone){
-      send(stream, 1000, new Buffer([50]), function(err, response){
-        if(err){
-          return cbdone(err);
-        }
-        if(response !==206){
-          return cbdone(new Error('Incorrect Response: ', response));
-        }
-
-        return cbdone();
-      });
-    },
-
-    function(cbdone){
       send(stream, 1000, new Buffer([0]), function(err, response){
-        if(err){
-          return cbdone(err);
+
+        if(err){ return cb(err); }
+
+        if (typeof response === 'undefined')
+        {
+          return cb(new Error('No Version Response'));
         }
 
-        return cbdone(null, response);
+        return cb(null, response);
       });
-    },
-
-    // stream.write.bind(stream, new Buffer([66])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 20);
-    // },
-    // stream.write.bind(stream, new Buffer([83])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 20);
-    // },
-    // stream.write.bind(stream, new Buffer([50])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 20);
-    // },
-    // stream.write.bind(stream, new Buffer([0])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 20);
-    // },
-
-
-    // stream.write.bind(stream, new Buffer([101])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 5000);
-    // },
-
-
-    // stream.write.bind(stream, new Buffer([88])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 5000);
-    // },
-
-    // stream.write.bind(stream, new Buffer([80])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 5000);
-    // },
-
-
-    // stream.write.bind(stream, new Buffer([73])),
-    // function(cbdone){
-    //  setTimeout(cbdone, 5000);
-    // },
-
-  ], function(err, results){
-    if(err)
-    {
-      return cb(err);
-    }
-
-    if (results.length <= 0)
-    {
-      return cb(new Error('No Version Response'));
-    }
-
-    var version = results[results.length-1];
-    // console.log('identify SUCCESS. Version: ', version);
-    return cb(null, version);
   });
 
 }
 
 function bootload(stream, hex, cb){
+
   async.series([
     identifyBS2.bind(null, stream),
     send.bind(null, stream, 1000, hex),
     stream.write.bind(stream, new Buffer([0])),
-
     ], function(err, results){
 
       cb(err, results);
-
   });
 }
 
