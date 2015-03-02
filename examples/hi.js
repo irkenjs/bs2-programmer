@@ -9,7 +9,7 @@ var hex = new Buffer([0xFF, 0x00, 0x00, 0x00, 0x00, 0x30, 0xA0, 0xC7, 0x92, 0x66
 function upload(path, done){
 
   var serialPort = new com.SerialPort(path, {
-    baudrate: 9600,
+    baudrate: 200,
   }, false);
 
   async.series([
@@ -20,15 +20,18 @@ function upload(path, done){
       setTimeout(cbdone, 5000);
     },
     //interesting fact, we currently have to dtr false to generate a reset
-    serialPort.set.bind(serialPort, {dtr: false, brk: true}),
+    serialPort.set.bind(serialPort, {dtr: false}),
     function(cbdone){
       setTimeout(cbdone, 2);
     },
-    serialPort.set.bind(serialPort, {dtr: true, brk: true}),
+    serialPort.set.bind(serialPort, {dtr: true}),
+    serialPort.write.bind(serialPort, new Buffer([0x00])),
+    // Need to stay about a 70ms blocking delay here for byte to clear before
+    // we're safe to switch baud
     function(cbdone){
-      setTimeout(cbdone, 45);
+      setTimeout(cbdone, 100);
     },
-    serialPort.set.bind(serialPort, {dtr: true, brk: false}),
+    serialPort.update.bind(serialPort, {baudRate: 9600}),
     bs2.bootload.bind(null, serialPort, hex)
 
   ], function(error, results){
