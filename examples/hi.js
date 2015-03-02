@@ -10,7 +10,7 @@ function upload(path, done){
 
   var serialPort = new com.SerialPort(path, {
     baudrate: 9600,
-  });
+  }, false);
 
   async.series([
     serialPort.open.bind(serialPort),
