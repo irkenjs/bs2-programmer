@@ -4,7 +4,7 @@ var send = require('./lib/sendData');
 var async = require('async');
 
 function identifyBS2(stream, cb) {
-  console.log('identifying');
+  // console.log('identifying');
 
   async.series([
 
@@ -110,7 +110,7 @@ function identifyBS2(stream, cb) {
     }
 
     var version = results[results.length-1];
-    console.log('identify SUCCESS. Version: ', version);
+    // console.log('identify SUCCESS. Version: ', version);
     return cb(null, version);
   });
 
