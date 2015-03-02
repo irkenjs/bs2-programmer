@@ -34,7 +34,7 @@ lab.experiment('identifyBS2', function () {
 
   lab.test('fails on incorrect response', function (done) {
 
-    var response = 200;
+    var response = 0xC8;
     bs2.identifyBS2(hw, function(error){
       
       Code.expect(error).to.exist();
@@ -51,11 +51,11 @@ lab.experiment('identifyBS2', function () {
 
   lab.test('succeeds on correct response', function (done) {
 
-    hw.setData(new Buffer([190, 173, 206, 16]));
+    hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
     bs2.identifyBS2(hw, function(error, result){
       
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.be.equal(16);
+      Code.expect(result).to.be.equal(0x10);
       done();
     });
   });
