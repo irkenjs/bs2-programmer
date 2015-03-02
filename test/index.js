@@ -6,6 +6,7 @@ var lab = exports.lab = Lab.script();
 
 var bs2 = require('../');
 var hardware = require('../mock/hardware');
+var revisions = require('../lib/revisions');
 
 lab.experiment('identifyBS2', function () {
 
@@ -24,7 +25,7 @@ lab.experiment('identifyBS2', function () {
 
   lab.test('times out', function (done) {
 
-    bs2.identifyBS2(hw, function(error){
+    bs2.identifyBS2(hw, revisions.bs2, function(error){
 
       Code.expect(error).to.exist();
       Code.expect(error.message).to.equal('Sending 42: receiveData timeout after 1000ms');
@@ -35,7 +36,7 @@ lab.experiment('identifyBS2', function () {
   lab.test('fails on incorrect response', function (done) {
 
     var response = 0xC8;
-    bs2.identifyBS2(hw, function(error){
+    bs2.identifyBS2(hw, revisions.bs2, function(error){
       
       Code.expect(error).to.exist();
       Code.expect(error.message).to.equal('Incorrect Response: ', response);
@@ -52,10 +53,10 @@ lab.experiment('identifyBS2', function () {
   lab.test('succeeds on correct response', function (done) {
 
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
-    bs2.identifyBS2(hw, function(error, result){
-      
+    bs2.identifyBS2(hw, revisions.bs2, function(error, result){
+
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.be.equal(0x10);
+      Code.expect(result).to.deep.equal({name: 'BS2', version: '1.0'});
       done();
     });
   });
