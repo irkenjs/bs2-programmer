@@ -25,7 +25,7 @@ function challenge(stream, options, cb){
       send(stream, 1000, options.challenge.slice(index, index + 1), function(err, response){
         if(err){ return cb(err); }
 
-        if(response !== options.response[index++]){
+        if(response !== options.response[index]){
           return cb(new Error('Incorrect Response: ', response));
         }
 
