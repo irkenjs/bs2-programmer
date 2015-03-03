@@ -7,7 +7,9 @@
     "test": "test"
   },
   "dependencies": {
-    "async": "^0.9.0"
+    "async": "^0.9.0",
+    "bach": "^0.4.1",
+    "lodash.times": "^3.0.0"
   },
   "devDependencies": {
     "serialport": "git://github.com/jacobrosenthal/node-serialport.git#controlsignals",
