@@ -1,5 +1,8 @@
 'use strict';
 
+var bach = require('bach');
+var times = require('lodash.times');
+
 var send = require('./lib/sendData');
 var revisions = require('./lib/revisions');
 
@@ -17,27 +20,21 @@ var async = require('async');
 // }
 
 function challenge(stream, options, cb){
-  var index = 0;
-
-  async.whilst(
-    function () { return index < options.challenge.length; },
-    function(cbdone){
-
+  var fns = times(options.challenge.length, function(index){
+    return function(cb){
       send(stream, 1000, options.challenge.slice(index, index + 1), function(err, response){
-        if(err){ return cbdone(err); }
+        if(err){ return cb(err); }
 
-        if(response !== options.response[index++]){
-          return cbdone(new Error('Incorrect Response: ', response));
+        if(response !== options.response[index]){
+          return cb(new Error('Incorrect Response: ', response));
         }
 
-        return cbdone();
+        return cb();
       });
-    },
-    function(err){
-      if(err) { return cb(err); }
-
-      return cb();
+    }
   });
+
+  bach.series(fns)(cb);
 }
 
 function identifyBS2(stream, options, cb) {
@@ -59,7 +56,7 @@ function identifyBS2(stream, options, cb) {
       });
 
     });
-  } 
+  }
 }
 
 function bootload(stream, hex, cb){
