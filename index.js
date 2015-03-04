@@ -17,6 +17,11 @@ var async = require('async');
 // }
 
 function challenge(stream, options, cb){
+  //if doesnt have a challenge just return
+  if(!options.hasOwnProperty('challenge')){
+    return cb();
+  }
+  
   var index = 0;
 
   async.whilst(
@@ -42,24 +47,15 @@ function challenge(stream, options, cb){
 
 function identifyBS2(stream, options, cb) {
 
-  if(options.hasOwnProperty('challenge')){
+  challenge(stream, options, function(err){
+    if(err){ return cb(err); }
 
-    challenge(stream, options, function(err){
+    send(stream, 1000, options.version, function(err, response){
       if(err){ return cb(err); }
 
-      send(stream, 1000, options.version, function(err, response){
-        if(err){ return cb(err); }
-
-        if (typeof response === 'undefined')
-        {
-          return cb(new Error('No Version Response'));
-        }
-
         options.lookup(response, cb);
-      });
-
     });
-  } 
+  });
 }
 
 function bootload(stream, hex, cb){
