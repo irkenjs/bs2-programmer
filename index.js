@@ -9,17 +9,6 @@ var when = require('when');
 var bindCallback = require('when/node').bindCallback;
 var nodefn = require('when/node');
 
-// function identify(stream, cb){
-
-//   async.eachSeries(revisions, iterator, cb);
-
-//   //need async
-//   for (rev in revisions){
-//     identify()
-//   }
-
-// }
-
 function challenge(stream, options, cb){
   //if doesnt have a challenge just return
   if(!options.hasOwnProperty('challenge')){
@@ -131,5 +120,6 @@ function bootload(stream, hex, cb){
 
 module.exports = {
   identifyBS2: identifyBS2,
-  bootload: bootload
+  bootload: bootload,
+  revisions: revisions
 };
