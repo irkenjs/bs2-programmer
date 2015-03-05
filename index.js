@@ -5,6 +5,10 @@ var revisions = require('./lib/revisions');
 
 var async = require('async');
 
+var when = require('when');
+var bindCallback = require('when/node').bindCallback;
+var nodefn = require('when/node');
+
 // function identify(stream, cb){
 
 //   async.eachSeries(revisions, iterator, cb);
@@ -46,16 +50,37 @@ function challenge(stream, options, cb){
 }
 
 function identifyBS2(stream, options, cb) {
+  return bindCallback(when.promise(function(resolve, reject) {
 
-  challenge(stream, options, function(err){
-    if(err){ return cb(err); }
+    var lookup = nodefn.lift(options.lookup);
 
-    send(stream, 1000, options.version, function(err, response){
-      if(err){ return cb(err); }
+    var ch = nodefn.lift(challenge);
 
-        options.lookup(response, cb);
-    });
-  });
+    function version(){
+      var d = when.defer();
+
+      send(stream, 1000, options.version, function(err, result){
+        if(err){ d.reject(err); }
+
+        return d.resolve(result);
+      });
+
+      return d.promise;
+    }
+
+    ch(stream, options)
+    .then(version)
+    .then(lookup)
+    //this is really dumb
+    .done(
+      function(result){
+        return resolve(result);
+      },
+      function(error){
+        return reject(error);
+      });
+
+  }), cb);
 }
 
 function bootload(stream, hex, cb){
