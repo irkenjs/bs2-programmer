@@ -1,7 +1,6 @@
 'use strict';
 
 var send = require('./lib/sendData');
-
 var revisions = require('./lib/revisions');
 
 var when = require('when');
@@ -14,31 +13,24 @@ function challenge(stream, options, cb){
     return cb();
   }
   
-  function unspool(buffer) {
-      return [buffer[0], buffer.slice(1)];
+  function unspool(index) {
+    return [index, index+1];
   }
 
-  function predicate(buffer) {
-      return buffer.length === 0;
+  function predicate(index) {
+    return index >= options.challenge.length ;
   }
 
-  //sigh hes deprecating this too
-  //https://github.com/cujojs/when/issues/370
-  //https://github.com/cujojs/when/issues/272
-
-  function handler(data) {
+  function handler(index) {
 
     var d = when.defer();
 
-    // console.log('sending', data);
+    send(stream, 1000, options.challenge.slice(index, index + 1), function(err, response){
+      if(err){ return d.reject(err); }
 
-    send(stream, 1000, new Buffer([data]), function(err, response){
-      if(err){ d.reject(err); }
-
-      // how to keep more state, specifically index, so I can match the response
-      // if(response !== options.response[index++]){
-      //   return d.reject(new Error('Incorrect Response: ', response));
-      // }
+      if(response !== options.response[index]){
+        return d.reject(new Error('Incorrect Response: ', response));
+      }
 
       return d.resolve();
     });
@@ -46,7 +38,10 @@ function challenge(stream, options, cb){
     return d.promise;
   }
 
-  var promsie = when.unfold(unspool, predicate, handler, options.challenge);
+  //sigh hes deprecating this too
+  //https://github.com/cujojs/when/issues/370
+  //https://github.com/cujojs/when/issues/272
+  var promsie = when.unfold(unspool, predicate, handler, 0);
   nodefn.bindCallback(promsie, cb);
 }
 
@@ -61,7 +56,7 @@ function identifyBS2(stream, options, cb) {
       var d = when.defer();
 
       send(stream, 1000, options.version, function(err, result){
-        if(err){ d.reject(err); }
+        if(err){ return d.reject(err); }
 
         return d.resolve(result);
       });
@@ -95,7 +90,7 @@ function bootload(stream, hex, cb){
       var d = when.defer();
 
       send(stream, 1000, hex, function(err, result){
-        if(err){ d.reject(err); }
+        if(err){ return d.reject(err); }
 
         return d.resolve(version);
       });
@@ -107,7 +102,7 @@ function bootload(stream, hex, cb){
       var d = when.defer();
 
       stream.write(new Buffer([0]), function(err, result){
-        if(err){ d.reject(err); }
+        if(err){ return d.reject(err); }
 
         return d.resolve(version);
       });
