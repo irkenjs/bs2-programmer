@@ -19,7 +19,7 @@ var async = require('async');
 function challenge(stream, options, cb){
   //if doesnt have a challenge just return
   if(!options.hasOwnProperty('challenge')){
-    return;
+    return cb();
   }
   
   var index = 0;
