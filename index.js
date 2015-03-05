@@ -84,15 +84,49 @@ function identifyBS2(stream, options, cb) {
 }
 
 function bootload(stream, hex, cb){
+  return bindCallback(when.promise(function(resolve, reject) {
 
-  async.series([
-    identifyBS2.bind(null, stream, revisions.bs2),
-    send.bind(null, stream, 1000, hex),
-    stream.write.bind(stream, new Buffer([0])),
-    ], function(err, results){
+    //partially applying deprecated, so then how do you late bind?
+    //https://github.com/cujojs/when/issues/313
 
-      cb(err, results);
-  });
+    //and if I did then how would I get the version through then?
+    function upload(version){
+      var d = when.defer();
+
+      send(stream, 1000, hex, function(err, result){
+        if(err){ d.reject(err); }
+
+        return d.resolve(version);
+      });
+
+      return d.promise;
+    }
+
+    function signoff(version){
+      var d = when.defer();
+
+      stream.write(new Buffer([0]), function(err, result){
+        if(err){ d.reject(err); }
+
+        return d.resolve(version);
+      });
+
+      return d.promise;
+    }
+
+    identifyBS2(stream, revisions.bs2)
+    .then(upload)
+    .then(signoff)
+    //this is really dumb
+    .done(
+      function(result){
+        return resolve(result);
+      },
+      function(error){
+        return reject(error);
+      });
+
+  }), cb);
 }
 
 module.exports = {
