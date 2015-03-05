@@ -1,9 +1,8 @@
 'use strict';
 
 var send = require('./lib/sendData');
-var revisions = require('./lib/revisions');
 
-var async = require('async');
+var revisions = require('./lib/revisions');
 
 var when = require('when');
 var bindCallback = require('when/node').bindCallback;
@@ -15,27 +14,40 @@ function challenge(stream, options, cb){
     return cb();
   }
   
-  var index = 0;
+  function unspool(buffer) {
+      return [buffer[0], buffer.slice(1)];
+  }
 
-  async.whilst(
-    function () { return index < options.challenge.length; },
-    function(cbdone){
+  function predicate(buffer) {
+      return buffer.length === 0;
+  }
 
-      send(stream, 1000, options.challenge.slice(index, index + 1), function(err, response){
-        if(err){ return cbdone(err); }
+  //sigh hes deprecating this too
+  //https://github.com/cujojs/when/issues/370
+  //https://github.com/cujojs/when/issues/272
 
-        if(response !== options.response[index++]){
-          return cbdone(new Error('Incorrect Response: ', response));
-        }
+  function handler(data) {
 
-        return cbdone();
-      });
-    },
-    function(err){
-      if(err) { return cb(err); }
+    var d = when.defer();
 
-      return cb();
-  });
+    // console.log('sending', data);
+
+    send(stream, 1000, new Buffer([data]), function(err, response){
+      if(err){ d.reject(err); }
+
+      // how to keep more state, specifically index, so I can match the response
+      // if(response !== options.response[index++]){
+      //   return d.reject(new Error('Incorrect Response: ', response));
+      // }
+
+      return d.resolve();
+    });
+
+    return d.promise;
+  }
+
+  var promsie = when.unfold(unspool, predicate, handler, options.challenge);
+  nodefn.bindCallback(promsie, cb);
 }
 
 function identifyBS2(stream, options, cb) {
