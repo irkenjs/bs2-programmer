@@ -1,8 +1,10 @@
 'use strict';
 
 var com = require('serialport');
+var when = require('when');
+var nodefn = require('when/node');
+
 var bs2 = require('../');
-var async = require('async');
 
 var hex = new Buffer([0xFF, 0x00, 0x00, 0x00, 0x00, 0x30, 0xA0, 0xC7, 0x92, 0x66, 0x48, 0x13, 0x84, 0x4C, 0x35, 0x07, 0xC0, 0x4B]);
 
@@ -12,47 +14,75 @@ function upload(path, done){
     baudrate: 9600,
   }, false);
 
-  async.series([
-    serialPort.open.bind(serialPort),
-    // dtr happenening for free on port open as long as we brk under ~12ms
-    //wait a bunch to prove we're actually resetting
-    function(cbdone){
-      setTimeout(cbdone, 5000);
-    },
-    //interesting fact, we currently have to dtr false to generate a reset
-    serialPort.set.bind(serialPort, {dtr: false, brk: true}),
-    function(cbdone){
-      setTimeout(cbdone, 2);
-    },
-    serialPort.set.bind(serialPort, {dtr: true, brk: true}),
-    function(cbdone){
-      setTimeout(cbdone, 45);
-    },
-    serialPort.set.bind(serialPort, {dtr: true, brk: false}),
-    bs2.bootload.bind(null, serialPort, hex)
-
-  ], function(error, results){
-
-    serialPort.close(function (error) {
-      if(error){
-        console.log(error);
-      }
+  function setDtr(){
+    return when.promise(function(resolve, reject) {
+      serialPort.set({dtr: false, brk: true}, function(err){
+        if(err){ return reject(err); }
+        return resolve();
+      });
     });
+  }
 
-    console.log(error, results);
-    done(error, results);
-  });
+  function setBrk(){
+    return when.promise(function(resolve, reject) {
+      serialPort.set({dtr: true, brk: true}, function(err){
+        if(err){ return reject(err); }
+        return resolve();
+      });
+    });
+  }
 
+  function clear(){
+    return when.promise(function(resolve, reject) {
+      serialPort.set({dtr: true, brk: false}, function(err){
+        if(err){ return reject(err); }
+        return resolve();
+      });
+    });
+  }
+
+  function bootload(){
+    return bs2.bootload(serialPort, hex);
+  }
+
+  function close(){
+    return when.promise(function(resolve, reject) {
+
+      serialPort.on('error', function(err){
+        return reject(err); 
+      });
+
+      serialPort.on('close', function(){
+        return resolve();
+      });
+
+      serialPort.close();
+    });
+  }
+
+
+  var promise = nodefn.lift(serialPort.open.bind(serialPort))()
+  .then(setDtr)
+  .delay(2)
+  .then(setBrk)
+  .delay(45)
+  .then(clear)
+  .then(bootload)
+  .finally(close);
+
+  return nodefn.bindCallback(promise, done);
 }
 
 if(process && process.argv && process.argv[2])
 {
-  upload(process.argv[2], function(error){
-    if(!error)
+  upload(process.argv[2], function(error, board){
+    if(error)
     {
-      console.log('programing SUCCESS!');
-      process.exit(0);
+      console.log('error ', error);
+    }else{
+      console.log('success ', board);
     }
+    process.exit(0);
   });
 }else
 {
