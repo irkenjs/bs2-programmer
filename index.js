@@ -49,7 +49,10 @@ function bootload(stream, hex, cb){
 
   function upload(version){
     return send(stream, 1000, hex)
-    .then(function(){
+    .then(function(response){
+      if(response){
+        throw new Error('Bad bootload response: ' + response);
+      }
       return version;
     });
   }
