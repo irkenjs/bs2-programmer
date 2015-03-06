@@ -23,7 +23,7 @@ function challenge(stream, options, cb){
     return send(stream, 1000, options.challenge.slice(index, index + 1))
       .then(function(response){
         if(response !== options.response[index]){
-           throw new Error('Incorrect Response: ', response);
+           throw new Error('Incorrect Response: ' + response);
         }
       });
   }
