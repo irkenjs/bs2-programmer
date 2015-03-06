@@ -52,7 +52,7 @@ function identify(stream, rev){
   }
 
   function id(){
-    return bs2.identifyBS2(stream, rev);
+    return bs2.identify(stream, rev);
   }
 
   function close(){

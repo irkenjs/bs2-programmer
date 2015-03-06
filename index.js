@@ -32,7 +32,7 @@ function challenge(stream, options, cb){
   return nodefn.bindCallback(promise, cb);
 }
 
-function identifyBS2(stream, options, cb) {
+function identify(stream, options, cb) {
 
   function version(){
     return send(stream, 1000, options.version);
@@ -66,7 +66,7 @@ function bootload(stream, type, hex, cb){
     });
   }
 
-  var promise = identifyBS2(stream, type)
+  var promise = identify(stream, type)
   .then(upload)
   .then(signoff);
 
@@ -74,7 +74,7 @@ function bootload(stream, type, hex, cb){
 }
 
 module.exports = {
-  identifyBS2: identifyBS2,
+  identify: identify,
   bootload: bootload,
   revisions: revisions
 };
