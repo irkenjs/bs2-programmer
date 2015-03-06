@@ -1,5 +1,7 @@
 #bs2
+
 [![Build Status](https://travis-ci.org/jacobrosenthal/bs2-programmer.svg)](https://travis-ci.org/jacobrosenthal/bs2-programmer)
+
 Upload tokenized hex to Basic Stamp 2.
 
 #note
