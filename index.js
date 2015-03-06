@@ -45,7 +45,7 @@ function identifyBS2(stream, options, cb) {
   return nodefn.bindCallback(promise, cb);
 }
 
-function bootload(stream, hex, cb){
+function bootload(stream, type, hex, cb){
 
   function upload(version){
     return send(stream, 1000, hex)
@@ -66,7 +66,7 @@ function bootload(stream, hex, cb){
     });
   }
 
-  var promise = identifyBS2(stream, revisions.bs2)
+  var promise = identifyBS2(stream, type)
   .then(upload)
   .then(signoff);
 

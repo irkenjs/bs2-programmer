@@ -307,7 +307,7 @@ lab.experiment('bs2', function () {
 
     //send bs2 response bytes, then the success byte
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
-    bs2.bootload(hw, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error, result){
+    bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error, result){
 
       Code.expect(error).to.not.exist();
       Code.expect(result).to.deep.equal({name: 'BS2', version: '1.0'});
@@ -320,7 +320,7 @@ lab.experiment('bs2', function () {
 
     //send bs2 response bytes, then the error byte
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x01]));
-    bs2.bootload(hw, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error){
+    bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error){
 
       Code.expect(error).to.exist();
       Code.expect(error.message).to.equal('Bad bootload response: 1');
