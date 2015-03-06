@@ -41,16 +41,11 @@ function challenge(stream, options, cb){
   //sigh hes deprecating this too
   //https://github.com/cujojs/when/issues/370
   //https://github.com/cujojs/when/issues/272
-  var promsie = when.unfold(unspool, predicate, handler, 0);
-  nodefn.bindCallback(promsie, cb);
+  var promise = when.unfold(unspool, predicate, handler, 0);
+  return nodefn.bindCallback(promise, cb);
 }
 
 function identifyBS2(stream, options, cb) {
-  return bindCallback(when.promise(function(resolve, reject) {
-
-    var lookup = nodefn.lift(options.lookup);
-
-    var ch = nodefn.lift(challenge);
 
     function version(){
       var d = when.defer();
@@ -64,23 +59,14 @@ function identifyBS2(stream, options, cb) {
       return d.promise;
     }
 
-    ch(stream, options)
+    var promise = challenge(stream, options)
     .then(version)
-    .then(lookup)
-    //this is really dumb
-    .done(
-      function(result){
-        return resolve(result);
-      },
-      function(error){
-        return reject(error);
-      });
+    .then(nodefn.lift(options.lookup));
 
-  }), cb);
+    return nodefn.bindCallback(promise, cb);
 }
 
 function bootload(stream, hex, cb){
-  return bindCallback(when.promise(function(resolve, reject) {
 
     //partially applying deprecated, so then how do you late bind?
     //https://github.com/cujojs/when/issues/313
@@ -110,19 +96,11 @@ function bootload(stream, hex, cb){
       return d.promise;
     }
 
-    identifyBS2(stream, revisions.bs2)
+    var promise = identifyBS2(stream, revisions.bs2)
     .then(upload)
-    .then(signoff)
-    //this is really dumb
-    .done(
-      function(result){
-        return resolve(result);
-      },
-      function(error){
-        return reject(error);
-      });
+    .then(signoff);
 
-  }), cb);
+    return nodefn.bindCallback(promise, cb);
 }
 
 module.exports = {
