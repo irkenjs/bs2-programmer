@@ -40,7 +40,7 @@ function identifyBS2(stream, options, cb) {
 
   var promise = challenge(stream, options)
   .then(version)
-  .then(nodefn.lift(options.lookup));
+  .then(options.lookup);
 
   return nodefn.bindCallback(promise, cb);
 }
