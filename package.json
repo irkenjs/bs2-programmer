@@ -17,6 +17,10 @@
   "scripts": {
     "test": "lab -cvL"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobrosenthal/bs2-programmer"
+  },
   "author": "Jacob Rosenthal",
   "license": "MIT"
 }
