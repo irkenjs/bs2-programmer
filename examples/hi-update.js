@@ -1,3 +1,6 @@
+// chrome doesnt have the brk functionality so we can fake it with a
+// slow baud send of 0x00 and an update instead of open/close so we
+// dont trip a reset
 'use strict';
 
 var com = require('serialport');
@@ -11,12 +14,21 @@ var hex = new Buffer([0xFF, 0x00, 0x00, 0x00, 0x00, 0x30, 0xA0, 0xC7, 0x92, 0x66
 function upload(path, done){
 
   var serialPort = new com.SerialPort(path, {
-    baudrate: 9600
+    baudrate: 200
   }, false);
 
   function setDtr(){
     return when.promise(function(resolve, reject) {
-      serialPort.set({dtr: false, brk: true}, function(err){
+      serialPort.set({dtr: false}, function(err){
+        if(err){ return reject(err); }
+        return resolve();
+      });
+    });
+  }
+
+  function clrDtr(){
+    return when.promise(function(resolve, reject) {
+      serialPort.set({dtr: true}, function(err){
         if(err){ return reject(err); }
         return resolve();
       });
@@ -25,16 +37,16 @@ function upload(path, done){
 
   function setBrk(){
     return when.promise(function(resolve, reject) {
-      serialPort.set({dtr: true, brk: true}, function(err){
+      serialPort.write(new Buffer([0x00]), function(err){
         if(err){ return reject(err); }
         return resolve();
       });
     });
   }
 
-  function clear(){
+  function clrBrk(){
     return when.promise(function(resolve, reject) {
-      serialPort.set({dtr: true, brk: false}, function(err){
+      serialPort.update({baudRate: 9600}, function(err){
         if(err){ return reject(err); }
         return resolve();
       });
@@ -64,9 +76,11 @@ function upload(path, done){
   var promise = nodefn.lift(serialPort.open.bind(serialPort))()
   .then(setDtr)
   .delay(2)
+  .then(clrDtr)
   .then(setBrk)
-  .delay(45)
-  .then(clear)
+  //should only return once byte was written? but find a delay necessary anyway
+  .delay(100)
+  .then(clrBrk)
   .then(bootload)
   .finally(close);
 

@@ -15,7 +15,7 @@
     "lab": "^5.2.1"
   },
   "scripts": {
-    "test": "lab -cv"
+    "test": "lab -cvL"
   },
   "author": "Jacob Rosenthal",
   "license": "MIT"

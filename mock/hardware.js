@@ -3,9 +3,9 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
-var hardware = function(){
-  if (!(this instanceof hardware)){
-    return new hardware();
+var Hardware = function(){
+  if (!(this instanceof Hardware)){
+    return new Hardware();
   }
 
   EventEmitter.call(this);
@@ -13,9 +13,9 @@ var hardware = function(){
   this.data = new Buffer(0);
   this.index = 0;
 };
-util.inherits(hardware, EventEmitter);
+util.inherits(Hardware, EventEmitter);
 
-hardware.prototype.write = function(data, callback){
+Hardware.prototype.write = function(data, callback){
 
   var self = this;
   callback(null, data);
@@ -33,9 +33,9 @@ hardware.prototype.write = function(data, callback){
   });
 };
 
-hardware.prototype.setData = function(buffer){
+Hardware.prototype.setData = function(buffer){
 
   this.data = buffer;
 };
 
-module.exports = hardware;
+module.exports = Hardware;

@@ -14,14 +14,14 @@ var bs2 = require('../');
 function search(path, done){
 
   var serialPort = new com.SerialPort(path, {
-    baudrate: 9600,
+    baudrate: 9600
   }, false);
 
   var promise = identify(serialPort, bs2.revisions.bs2);
   return nodefn.bindCallback(promise, done);
 
 }
- 
+
 function identify(stream, rev){
 
   function setDtr(){
@@ -59,7 +59,7 @@ function identify(stream, rev){
     return when.promise(function(resolve, reject) {
 
       stream.on('error', function(err){
-        return reject(err); 
+        return reject(err);
       });
 
       stream.on('close', function(){
