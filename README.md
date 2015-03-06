@@ -3,7 +3,7 @@
 Upload tokenized hex to Basic Stamp 2.
 
 #note
-* Currently only identifies BS2, not 2e, 2sx, etc.
+* Currently only uploads to BS2, not 2e, 2sx, etc.
 * You need [newer drivers](http://www.ftdichip.com/Drivers/VCP.htm)
 
 #install
@@ -15,46 +15,34 @@ npm install
 
 #examples
 ---
-To upload the debug "Hi" example to your device, from the main directory:
+To upload the debug "Hi" example to your device, from the main directory type:
 ```
 node examples/hi.js yourttyporthere
 ```
 You should see something like:
 ```
 Jacobs-MacBook-Air-2:bs2-programmer jacobrosenthal$ node examples/hi.js /dev/tty.usbserial-A502BMUQ
-resetting
-asserting dtr, asserting brk
-asserted dtr, asserted brk
-clearing dtr
-cleared dtr
-clearing brk
-reset complete
-identifying
-identify SUCCESS. Version:  16
-programing SUCCESS!
+success  { name: 'BS2', version: '1.0' }
 Jacobs-MacBook-Air-2:bs2-programmer jacobrosenthal$
 ```
 
 #api
 ----
-All functions take a previously opened stream-style object, in this case a serialport. See example for how to pre instantiate.
-
 ##bootload
-The only function you should need. Uploads your hex of Node Buffer of tokenized data with a time to Break during reset.
 ```
-bootload(stream, time, hex, cb)
+bootload(stream, hex, cb)
 ```
 
-##reset
-Called for you by bootload, but exposed for your convenience. Time is the amount of time to Break during reset.
-```
-reset(stream, time, cb)
-```
+* Uploads your hex of Node Buffer of tokenized data.
+* Takes a previously opened, reset stream-style object (See the example for details) and a Node buffer of tokenized bytes to send.
+* Callback has singature (error, object) where object is a version object like { name: 'BS2', version: '1.0' }
 
 ##identify
-Called for you by bootload, but exposed for your convenience. Returns the version.
+
 ```
-identifyBS2(stream, cb)
+identify(stream, revision, cb)
 ```
 
-
+* Called for you by bootload, but exposed for your convenience. 
+* Takes a previously opened, reset stream-style object (See the example for details) and a Node buffer of tokenized bytes to send.
+* Callback has singature (error, object) where object is a version object like { name: 'BS2', version: '1.0' }
