@@ -17,8 +17,8 @@ function search(path, done){
     baudrate: 9600,
   }, false);
 
-  var something = identify(serialPort, bs2.revisions.bs2);
-  return nodefn.bindCallback(something, done);
+  var promise = identify(serialPort, bs2.revisions.bs2);
+  return nodefn.bindCallback(promise, done);
 
 }
  
@@ -56,19 +56,19 @@ function identify(stream, rev){
   }
 
   function close(){
-  return when.promise(function(resolve, reject) {
+    return when.promise(function(resolve, reject) {
 
-    stream.on('error', function(err){
-      return reject(err); 
+      stream.on('error', function(err){
+        return reject(err); 
+      });
+
+      stream.on('close', function(){
+        return resolve();
+      });
+
+      stream.close();
     });
-
-    stream.on('close', function(){
-      return resolve();
-    });
-
-    stream.close();
-  });
-}
+  }
 
   return nodefn.lift(stream.open.bind(stream))()
   .then(setDtr)
