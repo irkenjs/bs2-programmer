@@ -33,11 +33,6 @@ hardware.prototype.write = function(data, callback){
   });
 };
 
-hardware.prototype.insert = function(data){
-
-  this.emit('data', data);
-};
-
 hardware.prototype.setData = function(buffer){
 
   this.data = buffer;
