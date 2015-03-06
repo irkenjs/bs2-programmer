@@ -8,9 +8,9 @@ var nodefn = require('when/node');
 
 function challenge(stream, options, cb){
   if(!options.hasOwnProperty('challenge')){
-    return cb();
+    return nodefn.bindCallback(when(0), cb);
   }
-  
+
   function unspool(index) {
     return [index, index + 1];
   }
