@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "async": "^0.9.0",
+    "serialport": "^1.6.1",
     "when": "^3.7.2"
   },
   "devDependencies": {
-    "serialport": "git://github.com/jacobrosenthal/node-serialport.git#controlsignals",
     "code": "^1.3.0",
     "lab": "^5.2.1"
   },

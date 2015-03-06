@@ -4,19 +4,18 @@ Upload tokenized hex to Basic Stamp 2.
 
 #note
 * Currently only identifies BS2, not 2e, 2sx, etc.
-* Supports unix environments only right now, based on a fork of node-serialport for break support
 * You need [newer drivers](http://www.ftdichip.com/Drivers/VCP.htm)
 
 #install
 ---
 Install [node.js](http://nodejs.org/). Then cd to this directory and install dependencies **from source**:
 ```
-npm install --build-from-source
+npm install
 ```
 
 #examples
 ---
-To upload the debug "Hi" example do your device, from the main directory:
+To upload the debug "Hi" example to your device, from the main directory:
 ```
 node examples/hi.js yourttyporthere
 ```
