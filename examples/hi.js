@@ -75,12 +75,12 @@ function upload(path, done){
 
 if(process && process.argv && process.argv[2])
 {
-  upload(process.argv[2], function(error, board){
+  upload(process.argv[2], function(error){
     if(error)
     {
       console.log('error ', error);
     }else{
-      console.log('success ', board);
+      console.log('success');
     }
     process.exit(0);
   });
