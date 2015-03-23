@@ -7,6 +7,8 @@ var lab = exports.lab = Lab.script();
 var bs2 = require('../');
 var hardware = require('../mock/hardware');
 
+var hi = new Buffer([0xFF, 0x00, 0x00, 0x00, 0x00, 0x30, 0xA0, 0xC7, 0x92, 0x66, 0x48, 0x13, 0x84, 0x4C, 0x35, 0x07, 0xC0, 0x4B]);
+var blink = new Buffer([0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x14, 0x20, 0x8c, 0x0e, 0xd8, 0xc8, 0x7c, 0xff, 0x0e, 0x60, 0x4a, 0xae, 0xe8, 0x9f, 0x49, 0xc1, 0x50, 0xc3, 0x6f, 0x8d, 0xd1, 0x03, 0x07, 0xc0, 0x60]);
 
 lab.experiment('bs2', function () {
 
@@ -302,24 +304,43 @@ lab.experiment('bs2', function () {
     });
   });
 
-  lab.test('bootload bs2', function (done) {
+  lab.test('bootload throws with non multiple of 18 byte data', function (done) {
+
+    var throws = function () {
+        bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(){});
+    };
+
+    Code.expect(throws).to.throw(Error, 'Data must be in multiples of 18 bytes');
+    done();
+  });
+
+  lab.test('bootload bs2 with 18 byte packet', function (done) {
 
     //send bs2 response bytes, then the success byte
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
-    bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error, result){
+    bs2.bootload(hw, bs2.revisions.bs2, hi, function(error){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2', version: '1.0'});
       done();
     });
   });
 
+  lab.test('bootload bs2 with 36 byte packet', function (done) {
+
+    //send bs2 response bytes, then 2 success bytes, 1 for each packet
+    hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00, 0x00]));
+    bs2.bootload(hw, bs2.revisions.bs2, blink, function(error){
+
+      Code.expect(error).to.not.exist();
+      done();
+    });
+  });
 
   lab.test('bootload bs2 error byte', function (done) {
 
-    //send bs2 response bytes, then the error byte
+    //send bs2 response bytes, then the error byte which should stop bootload at first 18 byte packet
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x01]));
-    bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(error){
+    bs2.bootload(hw, bs2.revisions.bs2, blink, function(error){
 
       Code.expect(error).to.exist();
       Code.expect(error.message).to.equal('Bad bootload response: 1');

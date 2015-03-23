@@ -46,22 +46,38 @@ function identify(stream, options, cb) {
 }
 
 function bootload(stream, type, hex, cb){
+  var pageSize = 18;
 
-  function upload(version){
-    return send(stream, 1000, hex)
-    .then(function(response){
-      if(response){
-        throw new Error('Bad bootload response: ' + response);
-      }
-      return version;
-    });
+  if(!hex || hex.length % pageSize !== 0){
+    throw new Error('Data must be in multiples of 18 bytes');
   }
 
-  function signoff(version){
+  function unspool(index) {
+    return index + pageSize;
+  }
+
+  function predicate(index) {
+    return index >= hex.length;
+  }
+
+  function handler(index) {
+    return send(stream, 10000, hex.slice(index, index + pageSize))
+      .then(function(response){
+        if(response){
+          throw new Error('Bad bootload response: ' + response);
+        }
+      });
+  }
+
+  function upload(){
+    return when.iterate(unspool, predicate, handler, 0);
+  }
+
+  function signoff(){
     return when.promise(function(resolve, reject) {
       stream.write(new Buffer([0]), function(err){
         if(err){ return reject(err); }
-        return resolve(version);
+        return resolve();
       });
     });
   }
