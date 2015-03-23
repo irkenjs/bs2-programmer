@@ -55,7 +55,7 @@ function identify(stream, options, cb) {
   return nodefn.bindCallback(promise, cb);
 }
 
-function bootload(stream, type, hex, cb){
+function bootload(stream, type, hex, timeout, cb){
   var pageSize = 18;
 
   if(!hex || hex.length % pageSize !== 0){
@@ -71,7 +71,7 @@ function bootload(stream, type, hex, cb){
   }
 
   function handler(index) {
-    return send(stream, 10000, hex.slice(index, index + pageSize))
+    return send(stream, timeout, hex.slice(index, index + pageSize))
       .then(function(response){
         if(response){
           throw new Error('Board nacked packet ' + (index / pageSize) + ' with code: ' + response);

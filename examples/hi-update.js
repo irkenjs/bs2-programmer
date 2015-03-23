@@ -56,7 +56,7 @@ function upload(path, done){
   }
 
   function bootload(){
-    return bs2.bootload(serialPort, bs2.revisions.bs2, hex);
+    return bs2.bootload(serialPort, bs2.revisions.bs2, hex, 1000);
   }
 
   function close(){
