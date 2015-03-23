@@ -1,3 +1,4 @@
+/*eslint-disable no-process-exit */
 'use strict';
 
 var com = require('serialport');

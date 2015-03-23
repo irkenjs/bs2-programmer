@@ -1,3 +1,5 @@
+/*eslint-disable no-process-exit */
+
 // chrome doesnt have the brk functionality so we can fake it with a
 // slow baud send of 0x00 and an update instead of open/close so we
 // dont trip a reset

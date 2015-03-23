@@ -1,3 +1,4 @@
+/*eslint-disable no-process-exit */
 'use strict';
 
 var com = require('serialport');
@@ -11,16 +12,6 @@ var bs2 = require('../');
 // backwards, if error we need to continue to another board
 // if success stop and give result..
 // soo ... infinite promise chain instead? or bach?
-function search(path, done){
-
-  var serialPort = new com.SerialPort(path, {
-    baudrate: 9600
-  }, false);
-
-  var promise = identify(serialPort, bs2.revisions.bs2);
-  return nodefn.bindCallback(promise, done);
-
-}
 
 function identify(stream, rev){
 
@@ -78,6 +69,17 @@ function identify(stream, rev){
   .then(clear)
   .then(id)
   .finally(close);
+}
+
+function search(path, done){
+
+  var serialPort = new com.SerialPort(path, {
+    baudrate: 9600
+  }, false);
+
+  var promise = identify(serialPort, bs2.revisions.bs2);
+  return nodefn.bindCallback(promise, done);
+
 }
 
 if(process && process.argv && process.argv[2])
