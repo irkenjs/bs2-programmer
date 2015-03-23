@@ -307,7 +307,7 @@ lab.experiment('bs2', function () {
   lab.test('bootload throws with non multiple of 18 byte data', function (done) {
 
     var throws = function () {
-        bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), function(){});
+        bs2.bootload(hw, bs2.revisions.bs2, new Buffer([0x00, 0x01, 0x02, 0x03]), 1000, function(){});
     };
 
     Code.expect(throws).to.throw(Error, 'Data must be in multiples of 18 bytes');
@@ -318,7 +318,7 @@ lab.experiment('bs2', function () {
 
     //send bs2 response bytes, then the success byte
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
-    bs2.bootload(hw, bs2.revisions.bs2, hi, function(error){
+    bs2.bootload(hw, bs2.revisions.bs2, hi, 1000, function(error){
 
       Code.expect(error).to.not.exist();
       done();
@@ -329,7 +329,7 @@ lab.experiment('bs2', function () {
 
     //send bs2 response bytes, then 2 success bytes, 1 for each packet
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00, 0x00]));
-    bs2.bootload(hw, bs2.revisions.bs2, blink, function(error){
+    bs2.bootload(hw, bs2.revisions.bs2, blink, 1000, function(error){
 
       Code.expect(error).to.not.exist();
       done();
@@ -340,7 +340,7 @@ lab.experiment('bs2', function () {
 
     //send bs2 response bytes, then the error byte which should stop bootload at first 18 byte packet
     hw.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x01]));
-    bs2.bootload(hw, bs2.revisions.bs2, blink, function(error){
+    bs2.bootload(hw, bs2.revisions.bs2, blink, 1000, function(error){
 
       Code.expect(error).to.exist();
       Code.expect(error.message).to.equal('Bad bootload response: 1');
