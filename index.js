@@ -6,6 +6,8 @@ var revisions = require('./lib/revisions');
 var when = require('when');
 var nodefn = require('when/node');
 
+var TimeoutError = require('./lib/timeouterror.js');
+
 function challenge(stream, options, cb){
   if(!options.hasOwnProperty('challenge')){
     return nodefn.bindCallback(when(0), cb);
@@ -23,7 +25,7 @@ function challenge(stream, options, cb){
     return send(stream, 1000, options.challenge.slice(index, index + 1))
       .then(function(response){
         if(response !== options.response[index]){
-           throw new Error('Incorrect Response: ' + response);
+           throw new Error('Incorrect Response: ' + response + '. Board might not be a ' + options.name);
         }
       });
   }
@@ -40,7 +42,15 @@ function identify(stream, options, cb) {
 
   var promise = challenge(stream, options)
   .then(version)
-  .then(options.lookup);
+  .then(options.lookup)
+  // rewrite timeout errors
+  .catch(function(e){
+    if(e instanceof TimeoutError)
+    {
+      throw new Error(options.name + ' did not respond. Check power, connection, or maybe this is not a ' + options.name);
+    }
+    throw e;
+  });
 
   return nodefn.bindCallback(promise, cb);
 }
@@ -64,7 +74,7 @@ function bootload(stream, type, hex, cb){
     return send(stream, 10000, hex.slice(index, index + pageSize))
       .then(function(response){
         if(response){
-          throw new Error('Bad bootload response: ' + response);
+          throw new Error('Board nacked packet ' + (index / pageSize) + ' with code: ' + response);
         }
       });
   }

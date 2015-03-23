@@ -23,7 +23,7 @@ lab.experiment('bs2', function () {
     bs2.identify(hw, bs2.revisions.bs2, function(error){
 
       Code.expect(error).to.exist();
-      Code.expect(error.message).to.equal('Sending 42: receiveData timeout after 1000ms');
+      Code.expect(error.message).to.equal('BS2 did not respond. Check power, connection, or maybe this is not a BS2');
       done();
     });
   });
@@ -34,7 +34,7 @@ lab.experiment('bs2', function () {
     bs2.identify(hw, bs2.revisions.bs2, function(error){
 
       Code.expect(error).to.exist();
-      Code.expect(error.message).to.equal('Incorrect Response: 200');
+      Code.expect(error.message).to.equal('Incorrect Response: 200. Board might not be a BS2');
       done();
     });
   });
@@ -343,7 +343,7 @@ lab.experiment('bs2', function () {
     bs2.bootload(hw, bs2.revisions.bs2, blink, function(error){
 
       Code.expect(error).to.exist();
-      Code.expect(error.message).to.equal('Bad bootload response: 1');
+      Code.expect(error.message).to.equal('Board nacked packet 0 with code: 1');
       done();
     });
   });
