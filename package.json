@@ -21,6 +21,9 @@
     "type": "git",
     "url": "https://github.com/jacobrosenthal/bs2-programmer"
   },
+  "bugs": {
+    "url": "https://github.com/jacobrosenthal/bs2-programmer/issues"
+  },
   "author": "Jacob Rosenthal",
   "license": "MIT"
 }
