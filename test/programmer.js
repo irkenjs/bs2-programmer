@@ -4,6 +4,8 @@ var Code = require('code');
 var Lab = require('lab');
 var lab = exports.lab = Lab.script();
 
+var Bs2Protocol = require('bs2-serialport');
+
 var Programmer = require('../').Programmer;
 var hardware = require('../mock/hardware');
 
@@ -12,16 +14,18 @@ var blink = new Buffer([0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x
 
 lab.experiment('Programmer', function () {
 
-  var transport;
+  var serial;
+  var protocol;
 
   lab.beforeEach(function (done) {
-    transport = hardware();
+    serial = hardware();
+    protocol = new Bs2Protocol({ serialport: serial });
     done();
   });
 
   lab.test('times out', function (done) {
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -32,9 +36,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('fails on incorrect response', function (done) {
 
-    transport.setData(new Buffer([0xC8, 0xAD, 0xCE, 0x10]));
+    serial.setData(new Buffer([0xC8, 0xAD, 0xCE, 0x10]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -45,9 +49,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2 1.0', function (done) {
 
-    transport.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
+    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -58,9 +62,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2 less than one character', function (done) {
 
-    transport.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x00]));
+    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x00]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -71,9 +75,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2e 1.0', function (done) {
 
-    transport.setData(new Buffer([0x65]));
+    serial.setData(new Buffer([0x65]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2e' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2e' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -84,9 +88,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2e unknown', function (done) {
 
-    transport.setData(new Buffer([0x02]));
+    serial.setData(new Buffer([0x02]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2e' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2e' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -98,9 +102,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2sx 1.0', function (done) {
 
-    transport.setData(new Buffer([0x58]));
+    serial.setData(new Buffer([0x58]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2sx' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2sx' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -111,9 +115,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2sx 1.1', function (done) {
 
-    transport.setData(new Buffer([0x59]));
+    serial.setData(new Buffer([0x59]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2sx' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2sx' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -124,9 +128,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2sx 1.2', function (done) {
 
-    transport.setData(new Buffer([0x60]));
+    serial.setData(new Buffer([0x60]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2sx' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2sx' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -137,9 +141,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2sx unknown', function (done) {
 
-    transport.setData(new Buffer([0x02]));
+    serial.setData(new Buffer([0x02]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2sx' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2sx' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -150,9 +154,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.0', function (done) {
 
-    transport.setData(new Buffer([0x70]));
+    serial.setData(new Buffer([0x70]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -163,9 +167,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.1', function (done) {
 
-    transport.setData(new Buffer([0x71]));
+    serial.setData(new Buffer([0x71]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -176,9 +180,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.2', function (done) {
 
-    transport.setData(new Buffer([0x72]));
+    serial.setData(new Buffer([0x72]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -189,9 +193,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.3', function (done) {
 
-    transport.setData(new Buffer([0x73]));
+    serial.setData(new Buffer([0x73]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -202,9 +206,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.0', function (done) {
 
-    transport.setData(new Buffer([0x50]));
+    serial.setData(new Buffer([0x50]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -215,9 +219,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.1', function (done) {
 
-    transport.setData(new Buffer([0x51]));
+    serial.setData(new Buffer([0x51]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -228,9 +232,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.2', function (done) {
 
-    transport.setData(new Buffer([0x52]));
+    serial.setData(new Buffer([0x52]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -241,9 +245,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p 1.3', function (done) {
 
-    transport.setData(new Buffer([0x53]));
+    serial.setData(new Buffer([0x53]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -254,9 +258,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2p unknown', function (done) {
 
-    transport.setData(new Buffer([0x02]));
+    serial.setData(new Buffer([0x02]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2p' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2p' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -267,9 +271,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.0', function (done) {
 
-    transport.setData(new Buffer([0x69]));
+    serial.setData(new Buffer([0x69]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -280,9 +284,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.1', function (done) {
 
-    transport.setData(new Buffer([0x70]));
+    serial.setData(new Buffer([0x70]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -293,9 +297,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.2', function (done) {
 
-    transport.setData(new Buffer([0x71]));
+    serial.setData(new Buffer([0x71]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -306,9 +310,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.0', function (done) {
 
-    transport.setData(new Buffer([0x49]));
+    serial.setData(new Buffer([0x49]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -319,9 +323,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.1', function (done) {
 
-    transport.setData(new Buffer([0x50]));
+    serial.setData(new Buffer([0x50]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -332,9 +336,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe 1.2', function (done) {
 
-    transport.setData(new Buffer([0x51]));
+    serial.setData(new Buffer([0x51]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
@@ -345,9 +349,9 @@ lab.experiment('Programmer', function () {
 
   lab.test('bs2pe unknown', function (done) {
 
-    transport.setData(new Buffer([0x02]));
+    serial.setData(new Buffer([0x02]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
@@ -358,7 +362,7 @@ lab.experiment('Programmer', function () {
 
   lab.test('bootload throws with non multiple of 18 byte data', function (done) {
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
 
     function invalidData () {
       bs2.bootload(new Buffer([0x00, 0x01, 0x02, 0x03]), function(){});
@@ -371,9 +375,9 @@ lab.experiment('Programmer', function () {
   lab.test('bootload bs2 with 18 byte packet', function (done) {
 
     //send bs2 response bytes, then the success byte
-    transport.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
+    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.bootload(hi, function(error){
 
       Code.expect(error).to.not.exist();
@@ -384,9 +388,9 @@ lab.experiment('Programmer', function () {
   lab.test('bootload bs2 with 36 byte packet', function (done) {
 
     //send bs2 response bytes, then 2 success bytes, 1 for each packet
-    transport.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00, 0x00]));
+    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00, 0x00]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.bootload(blink, function(error){
 
       Code.expect(error).to.not.exist();
@@ -397,9 +401,9 @@ lab.experiment('Programmer', function () {
   lab.test('bootload bs2 error byte', function (done) {
 
     //send bs2 response bytes, then the error byte which should stop bootload at first 18 byte packet
-    transport.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x01]));
+    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x01]));
 
-    var bs2 = new Programmer({ transport: transport, revision: 'bs2' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2' });
     bs2.bootload(blink, function(error){
 
       Code.expect(error).to.exist();
