@@ -14,7 +14,7 @@ function challenge(options, cb){
   return programmer.challenge(cb);
 }
 
-function bootload(options, hex, cb){
+function bootload(hex, options, cb){
   var programmer = new Programmer(options);
 
   return programmer.bootload(hex, cb);
