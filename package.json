@@ -14,7 +14,7 @@
     "bs2-serialport": "git://github.com/jacobrosenthal/bs2-serialport#protocol",
     "code": "^1.3.0",
     "lab": "^5.2.1",
-    "serialport": "^1.6.1"
+    "serialport": "git+https://github.com/jacobrosenthal/node-serialport#update"
   },
   "scripts": {
     "test": "lab -cvL"
