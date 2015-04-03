@@ -16,7 +16,7 @@ function upload(path, done){
     baudrate: 200
   };
 
-  var serialport = new SerialPort(path, serialOptions);
+  var serialport = new SerialPort(path, serialOptions, false);
 
   var protocolOpts = {
     serialport: serialport
