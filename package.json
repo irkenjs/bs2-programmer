@@ -11,10 +11,9 @@
     "when": "^3.7.2"
   },
   "devDependencies": {
-    "bs2-serialport": "git://github.com/jacobrosenthal/bs2-serialport#protocol",
+    "bs2-serial-protocol": "^0.1.2",
     "code": "^1.3.0",
-    "lab": "^5.2.1",
-    "serialport": "^1.6.1"
+    "lab": "^5.2.1"
   },
   "scripts": {
     "test": "lab -cvL"
