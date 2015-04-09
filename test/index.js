@@ -4,23 +4,19 @@ var Code = require('code');
 var Lab = require('lab');
 var lab = exports.lab = Lab.script();
 
-var Bs2Protocol = require('bs2-serialport');
-
 var bs2 = require('../');
-var hardware = require('../mock/hardware');
+var Protocol = require('../mock/protocol');
 
 var hi = require('./fixtures/hi');
 
 lab.experiment('bs2', function(){
 
-  var serial;
   var protocol;
   var options;
 
   lab.beforeEach(function(done){
-    serial = hardware();
-    serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
-    protocol = new Bs2Protocol({ serialport: serial });
+    protocol = new Protocol();
+    protocol._setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10]));
     options = {
       protocol: protocol,
       revision: 'bs2'
@@ -76,7 +72,7 @@ lab.experiment('bs2', function(){
 
     lab.beforeEach(function(done){
       //send bs2 response bytes, then the success byte
-      serial.setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
+      protocol._setData(new Buffer([0xBE, 0xAD, 0xCE, 0x10, 0x00]));
       done();
     });
 
