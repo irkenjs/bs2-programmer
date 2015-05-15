@@ -24,18 +24,12 @@ function search(path, done){
     // TODO: this needs a better abstraction because it is leaking
     // implementation details
     // maybe this could be a `search` method on programmer????
-    return protocol.enterProgramming()
-      .then(function(){
-        return bs2.identify(bs2Options);
-      })
+    return bs2.identify(bs2Options)
       .then(function(content){
         return { value: content, done: true };
       })
       .catch(function(){
         return { value: null, seed: idx + 1 };
-      })
-      .finally(function(){
-        return protocol.exitProgramming();
       });
   }, 0);
 

@@ -62,6 +62,7 @@ lab.experiment('bs2', function(){
           done();
         })
         .catch(function(err){
+          console.log(err);
           Code.expect(err).to.not.exist();
         })
         .done();
@@ -90,8 +91,7 @@ lab.experiment('bs2', function(){
         })
         .catch(function(err){
           Code.expect(err).to.not.exist();
-        })
-        .done();
+        });
     });
   });
 });
