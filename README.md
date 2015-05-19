@@ -1,6 +1,6 @@
-#bs2
+#bs2-programmer
 
-[![Build Status](https://travis-ci.org/jacobrosenthal/bs2-programmer.svg)](https://travis-ci.org/jacobrosenthal/bs2-programmer)
+[![Build Status](https://travis-ci.org/irkenjs/bs2-programmer.svg)](https://travis-ci.org/irkenjs/bs2-programmer)
 
 Upload tokenized hex to Basic Stamp 2.
 
@@ -45,6 +45,6 @@ bootload(stream, hex, cb)
 identify(stream, revision, cb)
 ```
 
-* Called for you by bootload, but exposed for your convenience. 
+* Called for you by bootload, but exposed for your convenience.
 * Takes a previously opened, reset stream-style object (See the example for details) and a Node buffer of tokenized bytes to send.
 * Callback has singature (error, object) where object is a version object like { name: 'BS2', version: '1.0' }
