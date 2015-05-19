@@ -90,7 +90,8 @@ lab.experiment('bs2', function(){
         })
         .catch(function(err){
           Code.expect(err).to.not.exist();
-        });
+        })
+        .done();
     });
   });
 });
