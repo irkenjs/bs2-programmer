@@ -11,7 +11,7 @@
     "when": "^3.7.2"
   },
   "devDependencies": {
-    "bs2-serial-protocol": "^0.1.2",
+    "bs2-serial-protocol": "^0.3.0",
     "code": "^1.3.0",
     "lab": "^5.2.1"
   },
