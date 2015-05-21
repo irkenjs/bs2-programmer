@@ -13,13 +13,21 @@ Protocol.prototype._setData = function(data){
   this._data = data;
 };
 
-Protocol.prototype.enterProgramming = function(cb){
+Protocol.prototype.enterProgramming = function(opts, cb){
+  if(typeof opts === 'function'){
+    cb = opts;
+    opts = {};
+  }
   var promise = when.resolve();
 
   return nodefn.bindCallback(promise, cb);
 };
 
-Protocol.prototype.exitProgramming = function(cb){
+Protocol.prototype.exitProgramming = function(opts, cb){
+  if(typeof opts === 'function'){
+    cb = opts;
+    opts = {};
+  }
   var promise = when.resolve();
 
   return nodefn.bindCallback(promise, cb);
