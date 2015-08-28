@@ -25,7 +25,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
-      Code.expect(error.message).to.equal('BS2 did not respond. Check power, connection, or maybe this is not a BS2');
+      Code.expect(error.message).to.equal('Board did not respond, check power and connection.');
       done();
     });
   });
