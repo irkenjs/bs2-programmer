@@ -1,6 +1,6 @@
 {
   "name": "bs2-programmer",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Upload tokenized hex to Basic Stamp 2",
   "main": "index.js",
   "directories": {
