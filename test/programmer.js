@@ -77,7 +77,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2e', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2e', version: '1.0', slotCount: 8 });
       done();
     });
   });
@@ -104,7 +104,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.0', slotCount: 8 });
       done();
     });
   });
@@ -117,20 +117,20 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.1'});
+      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.1', slotCount: 8 });
       done();
     });
   });
 
   lab.test('bs2sx 1.2', function (done) {
 
-    protocol._setData(new Buffer([0x60]));
+    protocol._setData(new Buffer([0x5a]));
 
     var bs2 = new Programmer({ protocol: protocol, revision: 'bs2sx' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.2'});
+      Code.expect(result).to.deep.equal({name: 'BS2sx', version: '1.2', slotCount: 8 });
       done();
     });
   });
@@ -156,7 +156,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p24', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.0', slotCount: 8 });
       done();
     });
   });
@@ -169,7 +169,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p24', version: '1.1'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.1', slotCount: 8 });
       done();
     });
   });
@@ -182,7 +182,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p24', version: '1.2'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.2', slotCount: 8 });
       done();
     });
   });
@@ -195,7 +195,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p24', version: '1.3'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.3', slotCount: 8 });
       done();
     });
   });
@@ -208,7 +208,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p40', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.0', slotCount: 8 });
       done();
     });
   });
@@ -221,7 +221,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p40', version: '1.1'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.1', slotCount: 8 });
       done();
     });
   });
@@ -234,7 +234,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p40', version: '1.2'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.2', slotCount: 8 });
       done();
     });
   });
@@ -247,7 +247,7 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2p40', version: '1.3'});
+      Code.expect(result).to.deep.equal({name: 'BS2p', version: '1.3', slotCount: 8 });
       done();
     });
   });
@@ -273,33 +273,33 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe24', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.0', slotCount: 8 });
       done();
     });
   });
 
   lab.test('bs2pe 1.1', function (done) {
 
-    protocol._setData(new Buffer([0x70]));
+    protocol._setData(new Buffer([0x6a]));
 
     var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe24', version: '1.1'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.1', slotCount: 8 });
       done();
     });
   });
 
   lab.test('bs2pe 1.2', function (done) {
 
-    protocol._setData(new Buffer([0x71]));
+    protocol._setData(new Buffer([0x6b]));
 
     var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe24', version: '1.2'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.2', slotCount: 8 });
       done();
     });
   });
@@ -312,33 +312,33 @@ lab.experiment('Programmer', function () {
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe40', version: '1.0'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.0', slotCount: 8 });
       done();
     });
   });
 
   lab.test('bs2pe 1.1', function (done) {
 
-    protocol._setData(new Buffer([0x50]));
+    protocol._setData(new Buffer([0x4a]));
 
     var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe40', version: '1.1'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.1', slotCount: 8 });
       done();
     });
   });
 
   lab.test('bs2pe 1.2', function (done) {
 
-    protocol._setData(new Buffer([0x51]));
+    protocol._setData(new Buffer([0x4b]));
 
     var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
     bs2.identify(function(error, result){
 
       Code.expect(error).to.not.exist();
-      Code.expect(result).to.deep.equal({name: 'BS2pe40', version: '1.2'});
+      Code.expect(result).to.deep.equal({name: 'BS2pe', version: '1.2', slotCount: 8 });
       done();
     });
   });
@@ -347,7 +347,7 @@ lab.experiment('Programmer', function () {
 
     protocol._setData(new Buffer([0x02]));
 
-    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe' });
+    var bs2 = new Programmer({ protocol: protocol, revision: 'bs2pe', slotCount: 8 });
     bs2.identify(function(error){
 
       Code.expect(error).to.exist();
